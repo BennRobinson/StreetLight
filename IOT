@@ -1,0 +1,122 @@
+#include <WiFi.h> 
+#include <WiFiClient.h>; 
+#include <ThingSpeak.h>; 
+ 
+const char* ssid = "*********"; const char* password = "**************"; 
+ 
+WiFiClient client; 
+ 
+unsigned long myChannelNumber = 5435345; 
+const char * myWriteAPIKey = "*************"; const char * myReadAPIKey = "**************"; 
+ 
+int Street_light_1 = 23; int Street_light_2 = 22; int Street_light_3 = 5; int Street_light_4 = 15; int sensor1 = 19; int sensor2 = 18; int sensor3 = 4; int sensor4 = 2; 
+ 
+int light_sensor = 13; int val =0; 
+ 
+void setup() {   Serial.begin(9600);   delay(10);   pinMode(sensor1,INPUT);   pinMode(Street_light_1,OUTPUT); 
+ 
+  pinMode(sensor2,INPUT);   pinMode(Street_light_2,OUTPUT); 
+ 
+  pinMode(sensor3,INPUT);   pinMode(Street_light_3,OUTPUT); 
+ 
+  pinMode(sensor4,INPUT);   pinMode(Street_light_4,OUTPUT);   WiFi.begin(ssid, password); 
+  ThingSpeak.begin(client); 
+} 
+ 
+void loop() {   int s1 = digitalRead(sensor1);   int s2 = digitalRead(sensor2);   int s3 = digitalRead(sensor3);   int s4 = digitalRead(sensor4);   s3 = not(s3); 
+ 
+  val = analogRead(light_sensor); 
+ 
+  Serial.print(s1); 
+  Serial.print(":"); 
+  Serial.print(s2); 
+  Serial.print(":"); 
+  Serial.print(s3); 
+  Serial.print(":"); 
+  Serial.print(s4); 
+  Serial.print(":");   Serial.println(val);   if(val<800) 
+  { 
+    if(s1==0) 
+    { 
+      digitalWrite(Street_light_1,LOW); 
+    } 
+    else 
+    { 
+      digitalWrite(Street_light_1,HIGH); 
+    } 
+    if(s2==0) 
+    { 
+      digitalWrite(Street_light_2,LOW); 
+    } 
+    else 
+    { 
+      digitalWrite(Street_light_2,HIGH); 
+    } 
+ 
+    if(s3==0) 
+    { 
+      digitalWrite(Street_light_3,LOW); 
+    } 
+    else 
+    { 
+      digitalWrite(Street_light_3,HIGH); 
+    } 
+        if(s4==0) 
+    { 
+      digitalWrite(Street_light_4,LOW); 
+    } 
+    else 
+    { 
+      digitalWrite(Street_light_4,HIGH); 
+    } 
+  } 
+  else 
+  { 
+    digitalWrite(Street_light_1,LOW);     digitalWrite(Street_light_2,LOW);     digitalWrite(Street_light_3,LOW);     digitalWrite(Street_light_4,LOW); 
+  } 
+ 
+  ThingSpeak.writeField(myChannelNumber, 1,val, myWriteAPIKey); 
+  ThingSpeak.writeField(myChannelNumber, 2,s1, myWriteAPIKey); 
+  ThingSpeak.writeField(myChannelNumber, 3,s2, myWriteAPIKey); 
+  ThingSpeak.writeField(myChannelNumber, 4,s3, myWriteAPIKey); 
+  ThingSpeak.writeField(myChannelNumber, 5,s4, myWriteAPIKey); 
+  ThingSpeak.writeField(myChannelNumber, 6,Street_light_1, myWriteAPIKey); 
+  ThingSpeak.writeField(myChannelNumber, 7,Street_light_2, myWriteAPIKey); 
+  ThingSpeak.writeField(myChannelNumber, 8,Street_light_3, myWriteAPIKey);   ThingSpeak.writeField(myChannelNumber, 9,Street_light_4, myWriteAPIKey); 
+ 
+  int led_1 = ThingSpeak.readIntField(myChannelNumber, 5, myReadAPIKey);   int led_2 = ThingSpeak.readIntField(myChannelNumber, 6, myReadAPIKey);   int led_3 = ThingSpeak.readIntField(myChannelNumber, 7, myReadAPIKey);   int led_4 = ThingSpeak.readIntField(myChannelNumber, 7, myReadAPIKey); 
+ 
+  if(led_1==1) 
+  { 
+    digitalWrite(Street_light_1,HIGH); 
+  } 
+  else 
+  { 
+    digitalWrite(Street_light_1,LOW); 
+  } 
+ 
+  if(led_2==1) 
+  { 
+    digitalWrite(Street_light_2,HIGH); 
+  } 
+  else 
+  { 
+    digitalWrite(Street_light_2,LOW); 
+  } 
+ 
+  if(led_3==1) 
+  { 
+    digitalWrite(Street_light_3,HIGH); 
+  } 
+  else 
+  { 
+    digitalWrite(Street_light_3,LOW); 
+  } 
+    if(led_4==1) 
+  { 
+    digitalWrite(Street_light_4,HIGH); 
+  } 
+  else 
+  { 
+    digitalWrite(Street_light_4,LOW); 
+  } 
